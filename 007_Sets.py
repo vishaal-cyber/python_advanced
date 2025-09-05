@@ -1,4 +1,4 @@
-# Set - Mutable collection of 'keys' (i.e. immutables)
+# Set - Unordered Mutable collection of 'keys' (i.e. immutables)
 # Key - Hashable object
 # Hashable - Non-mutating; Immutable
 
