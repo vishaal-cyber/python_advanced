@@ -30,3 +30,4 @@ p1 = {
 Point = namedtuple("Point", 'x y')
 p2 = Point(10, 20)
 print(p2.x, p2.y)
+print(p2[0], p2[1])
