@@ -12,6 +12,7 @@
 
 ## Snippets
 * Create Virtual environment with __*'venv'*__ : `py -m venv .venv-trial`
+    * Choose a specific Python version: `/c/Users/Ramakant/AppData/Local/Programs/Python/Python311/python -m venv .venv-Py311`
 * Actiavte virt. env:
     * Bash: `source .venv-trial/Scripts/activate`
     * Command Prompt: `.venv-trial\Scripts\activate.bat`
