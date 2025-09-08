@@ -105,7 +105,7 @@
 #endregion #########################################
 
 
-#region ###############################################################
+#region Arguments (Packing, Unpacking, Variable Args, KwVariable Args )###############################################################
 
 # # lst = [1, 2]
 # # lst = [1, 2, 3]
@@ -131,23 +131,133 @@
 # a, b, c = 1, 2, 3
 
 
-def add(a, b):
-    return a + b
+# def add(a, b):
+#     return a + b
 
+
+# # print(add(1, 2))
+
+
+# x, y = 1, 2
+# print(add(x, y))
+
+
+# lst = [1, 2]
+# print(add(lst[0], lst[1]))
+
+# # print(add(lst))    # a, b = lst   <--- Not implied 
+# print(add(*lst))    # <-- Unpacking the list to supply for the arguments
+
+
+
+# *new_lst = 1, 2, 3
+
+
+
+#----------------------------------------------
+
+
+# # Variable Arguments
+# def add (a, b, *c):     # <-- Package all values other than the first 2, into c (as a collection)
+#     sum = a + b
+#     print(f"{type(c) = }, {c = }")
+
+#     for val in c:
+#         sum += val
+
+#     return sum
 
 # print(add(1, 2))
+# print(add(1, 2, 3))
+# print(add(1, 2, 3, 4))
+
+# lst2 = [1, 2, 3, 4, 5, 6, 7]
+# print(add(*lst2))
 
 
-x, y = 1, 2
-print(add(x, y))
+
+# # Keyworded Variable Args
+# def PrintEmp(ceo, cfo, **others):
+#     print(f"[{ceo = }, {cfo = }]")
+#     for pos, emp in others.items():
+#         print(f"{pos} = {emp}")
 
 
-lst = [1, 2]
-print(add(lst[0], lst[1]))
-
-# print(add(lst))    # a, b = lst   <--- Not implied 
-print(add(*lst))
-
+# PrintEmp("Manish", "Abhijeet")
+# PrintEmp("Manish", cfo="Abhijeet")
+# # PrintEmp(ceo="Manish", "Abhijeet")      # <-- Wn't work; Named arg can NOT be before Positional arg
+# PrintEmp(ceo="Manish", cfo="Abhijeet")
+# PrintEmp(ceo="Manish", cfo="Abhijeet", cto="Pravin")
+# PrintEmp("Manish", "Abhijeet", cto="Pravin")
 
 
 #endregion ###########################################################
+
+
+#region Scope ########################################
+## LEGB --> Local, External, Global, Builtins
+
+# def Foo():
+#     global s
+#     s = "Modified String"
+#     print(f"Foo --> {s}")
+
+# s = "Global String"
+
+# Foo()
+# print(f"Global --> {s}")
+
+
+#-----------------------------------
+
+# def Outer():
+#     # global s
+#     print(f"{locals() = }")
+#     s = "Outer String"
+
+#     def Inner():
+#         # global s
+#         # nonlocal s
+#         s = "Inner String"
+#         print(f"Inner --> {s}")
+
+#     Inner()
+#     print(f"Outer --> {s}")
+
+#     print(f"{globals() = }")
+#     # print(f"Testing --> {globals()['s']}")
+#     globals()['s'] = "Modified Global"
+
+# s = "Global String"
+
+# Outer()
+# print(f"Global --> {s}")
+
+#----------------------------------------------------
+
+
+def Outer():
+    s = "Outer String"
+
+    def Inner():
+        s = "Inner String"
+        print(f"Inner --> {s}")
+
+    print(f"Outer --> {s}")
+    return Inner
+
+
+s = "Global String"
+
+fn = Outer()
+print(f"Global --> {s}")
+
+fn()
+
+print("-"*25)
+Outer()()
+
+#endregion ######################################
+
+# Need to discuss 'Closure' at some point
+
