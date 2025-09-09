@@ -1,0 +1,35 @@
+Task:
+
+    1. Parsing XML Data:
+        * Read the provided XML file (data.xml) using ElementTree.
+        * Extract the following information from the XML:
+                Name of the book.
+                Author of the book.
+                Publication year of the book.
+                Price of the book.
+                List of genres the book belongs to (if available).
+        * Print the extracted information.
+
+    2. Adding New Book:
+        * Create a new book entry with the following details:
+                Name: "Python Programming"
+                Author: "Guido van Rossum"
+                Publication Year: 2022
+                Price: $39.99
+                Genre: "Programming"
+        * Add the new book entry to the existing XML structure.
+
+    3. Writing XML Data:
+        * Write the modified XML data back to a new XML file (updated_data.xml).
+        * Ensure the XML file maintains the same structure as the original file, with the addition of the new book entry.
+
+Instructions:
+
+    * Use Python's ElementTree module to parse and manipulate XML data.
+    * Ensure proper error handling is implemented for file operations and XML parsing.
+    * Use meaningful variable names and comments to enhance code readability.
+    * Submit both the Python script and the updated XML file (updated_data.xml).
+    * Include any additional documentation or explanation as needed in the script.
+
+Note:
+Ensure that the provided XML file (data.xml) contains at least one book entry to facilitate the parsing and modification tasks.

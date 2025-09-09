@@ -1,0 +1,22 @@
+<library>
+    <book>
+        <title>Harry Potter</title>
+        <author>J.K. Rowling</author>
+        <year>2005</year>
+        <price>29.99</price>
+        <genres>
+            <genre>Fiction</genre>
+            <genre>Fantasy</genre>
+            <genre>Adventure</genre>
+        </genres>
+    </book>
+    <book>
+        <title>The Catcher in the Rye</title>
+        <author>J.D. Salinger</author>
+        <year>1951</year>
+        <price>19.99</price>
+        <genres>
+            <genre>Fiction</genre>
+        </genres>
+    </book>
+</library>
