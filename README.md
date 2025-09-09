@@ -8,7 +8,8 @@
     * [Escape Sequences](https://docs.python.org/3.11/reference/lexical_analysis.html#escape-sequences)
     * [Format Specifications](https://docs.python.org/3.11/library/string.html#format-specification-mini-language)
 * [Virtual Environments using __*'venv'*__ ](https://docs.python.org/3/library/venv.html#module-venv)
-
+* [Standard Encodings](https://docs.python.org/3/library/codecs.html)
+* [Built-in Open Method](https://docs.python.org/3/library/functions.html#open)
 
 ## Snippets
 * Create Virtual environment with __*'venv'*__ : `py -m venv .venv-trial`
