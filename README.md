@@ -10,6 +10,8 @@
 * [Virtual Environments using __*'venv'*__ ](https://docs.python.org/3/library/venv.html#module-venv)
 * [Standard Encodings](https://docs.python.org/3/library/codecs.html)
 * [Built-in Open Method](https://docs.python.org/3/library/functions.html#open)
+* [Built-in Exceptions](https://docs.python.org/3/library/exceptions.html)
+    * [Exception Hierarchy](https://docs.python.org/3/library/exceptions.html#exception-hierarchy)
 
 ## Snippets
 * Create Virtual environment with __*'venv'*__ : `py -m venv .venv-trial`
@@ -19,3 +21,6 @@
     * Command Prompt: `.venv-trial\Scripts\activate.bat`
     * Power Shell: `.venv-trial\Scripts\Activate.ps1`
 * Deactivate: `deactivate`
+
+## Operational
+* [Trainer Feedback](https://forms.gle/BfGFANkbAN9tSUZg9)
