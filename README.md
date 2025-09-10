@@ -12,6 +12,7 @@
 * [Built-in Open Method](https://docs.python.org/3/library/functions.html#open)
 * [Built-in Exceptions](https://docs.python.org/3/library/exceptions.html)
     * [Exception Hierarchy](https://docs.python.org/3/library/exceptions.html#exception-hierarchy)
+* [operator - As fucntions](https://docs.python.org/3/library/operator.html#module-operator)
 
 ## Snippets
 * Create Virtual environment with __*'venv'*__ : `py -m venv .venv-trial`
