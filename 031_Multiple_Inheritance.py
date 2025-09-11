@@ -50,9 +50,13 @@ class IntList(SimpleList):
 
 #---------------------------------------------------------------------------------
 
-# class SortedIntList(IntList, SortedList):
-class SortedIntList(SortedList, IntList):
-    pass
+class SortedIntList(IntList, SortedList):
+# class SortedIntList(SortedList, IntList):
+    def __init__(self, items=[]):
+        print(f"{super() = }")
+        print(f"{self.__class__.__bases__ = }")
+        print(f"{self.__class__.__mro__ = }")
+        super().__init__(items)
 
 #---------------------------------------------------------------------------------
 
@@ -107,10 +111,25 @@ def Test4():
 
     print("\n")
 
+def Test5():
+    try:
+        sil = SortedIntList([42, 23, 3])
+        sil.add(-1234)
+        print(sil)
+    except Exception as ex:
+        print(f"{ex!r}")
+
+def Test6():
+    print(f"{SortedIntList.__mro__ = }")
+    print(f"{IntList.__mro__ = }")
+    print(f"{SortedList.__mro__ = }")
+    print(f"{SimpleList.__mro__ = }")
 
 
 if __name__ == "__main__":
     # Test1()
     # Test2()
     # Test3()
-    Test4()
+    # Test4()
+    # Test5()
+    Test6()
