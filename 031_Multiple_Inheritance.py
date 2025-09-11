@@ -1,5 +1,6 @@
 class SimpleList:
     def __init__(self, items = []):
+        print("SimpleList.__init__()")
         self.items = list(items)
 
     def add(self, item):
@@ -21,6 +22,7 @@ class SimpleList:
 
 class SortedList(SimpleList):
     def __init__(self, items=[]):
+        print("SortedList.__init__()")
         super().__init__(items)
         self.sort()
 
@@ -32,6 +34,7 @@ class SortedList(SimpleList):
 
 class IntList(SimpleList):
     def __init__(self, items=[]):
+        print("IntList.__init__()")
         for x in items:
             self.validate(int(x))
         super().__init__([int(x) for x in items])
@@ -44,6 +47,12 @@ class IntList(SimpleList):
     def add(self, item):
         self.validate(int(item))
         super().add(int(item))
+
+#---------------------------------------------------------------------------------
+
+# class SortedIntList(IntList, SortedList):
+class SortedIntList(SortedList, IntList):
+    pass
 
 #---------------------------------------------------------------------------------
 
@@ -72,7 +81,36 @@ def Test3():
     il.add('5')
     print(il)
 
+def Test4():
+    try:
+        sil = SortedIntList([42, 23, 3])
+        sil.add(-1234)
+        print(sil)
+    except Exception as ex:
+        print(f"{ex!r}")
+
+    print("\n")
+
+    try:
+        sil2 = SortedIntList([5, 2, 8, '4', 7, 3])
+        print(sil2)
+    except Exception as ex:
+        print(f"{ex!r}")
+
+    print("\n")
+
+    try:
+        sil3 = SortedIntList([5, 2, 8, 'four', 7, 3])
+        print(sil3)
+    except Exception as ex:
+        print(f"{ex!r}")
+
+    print("\n")
+
+
+
 if __name__ == "__main__":
     # Test1()
     # Test2()
-    Test3()
+    # Test3()
+    Test4()
