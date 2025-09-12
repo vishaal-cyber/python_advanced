@@ -210,3 +210,5 @@ __marimo__/
 
 # Generated files
 updated_data.*
+Employee.json
+Employee.pkl

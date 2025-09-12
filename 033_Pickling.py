@@ -55,9 +55,41 @@ def JSONModifyData(fileName):
         json.dump(dt, file)
 
 
+## Pickle ###################################################
+
+import pickle
+
+def PickleStorage(fileName):
+    # 1. Create Employee object
+    emp = Employee(111, "Rakesh", 100000)
+
+    # 2. Save object to a file
+    with open(fileName, "wb") as file:
+        pickle.dump(emp, file)
+
+def PickleModifyFile(fileName):
+    # 3. Read from file to object
+    with open(fileName, 'rb') as file:
+        obj = pickle.load(file)
+    print(obj)
+
+    # 4. Modify the object
+    obj.salary += 5000
+    print(obj)
+
+    # 5. Save object to a file
+    with open(fileName, 'wb') as file:
+        pickle.dump(obj, file)
+
 
 ############################################################
 if __name__ == "__main__":
-    JSONStorage("Employee.json")
+    # JSON 
+    # JSONStorage("Employee.json")
     print("-" * 80)
     JSONModifyData("Employee.json")
+    print("\n", "-" * 80, "\n")
+
+    # Pickle
+    # PickleStorage('Employee.pkl')
+    PickleModifyFile('Employee.pkl')
