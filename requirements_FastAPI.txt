@@ -1,0 +1,7 @@
+fastapi[all]
+sqlmodel
+passlib[bcrypt]
+pytest
+
+# SQLITE installation
+# VS code Extension: SQLite Viewer (by Florian Klampfer)

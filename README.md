@@ -13,6 +13,17 @@
 * [Built-in Exceptions](https://docs.python.org/3/library/exceptions.html)
     * [Exception Hierarchy](https://docs.python.org/3/library/exceptions.html#exception-hierarchy)
 * [operator - As fucntions](https://docs.python.org/3/library/operator.html#module-operator)
+* Concurrency topic for further reading (if interested):
+    * Synchronisation of Threads and Processes
+    * Pools and methods (apply, map, and the async versions of these)
+    * Executors
+    * concurrent.Future
+    * couroutines
+    * Event loops
+    * Gather
+    * Asyncio libraries (aiohttp, aiofiles) 
+    * https://github.com/python/asyncio
+    * https://github.com/aio-libs
 
 ## Snippets
 * Create Virtual environment with __*'venv'*__ : `py -m venv .venv-trial`
