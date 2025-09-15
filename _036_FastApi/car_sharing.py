@@ -36,7 +36,23 @@ def favicon():
     """Serves the favicon.ico file"""
     return FileResponse(os.path.join(os.path.dirname(__file__), 'static', 'sun.png'))
 
+# @app.get("/api/cars")
+# def get_cars():
+#     """Returns a collection of cars from the server records."""
+#     return db
+
+
+# Filter the data based on 'size'
 @app.get("/api/cars")
-def get_cars():
+def get_cars(size, doors:int):
     """Returns a collection of cars from the server records."""
-    return db
+    # if not isinstance(int(doors), int):
+    #     raise TypeError("doors should be an integer")
+    # # if size:
+    #     return [car for car in db if car['size'] == size]
+    # else:
+    #     return db
+    print(type(size), size, type(doors), doors)
+
+    # return [car for car in db if car['size'] == size and car['door'] >= int(doors)]
+    return [car for car in db if car['size'] == size and car['door'] >= doors]
