@@ -1,7 +1,8 @@
 from datetime import datetime
 from fastapi import FastAPI
 from fastapi.responses  import FileResponse
-from typing import Optional
+# from typing import Optional
+import uvicorn
 
 import os
 
@@ -43,7 +44,7 @@ def favicon():
 #     return db
 
 
-## Query Params
+## Query Params     (http://localhost:8000/api/cars?size=s&doors=4)
 # Filter the data based on 'size' and/or 'doors'
 @app.get("/api/cars")
 def get_cars(size:str|None=None, doors:int|None=None):
@@ -70,3 +71,13 @@ def get_cars(size:str|None=None, doors:int|None=None):
 
     return results
 
+
+## PATH Params
+# Retrieve a specific car by id
+@app.get("/api/cars/{id}")
+def car_by_id(id:int):
+    results = [car for car in db if car['id'] == id]
+    return results[0]
+
+if __name__ == "__main__":
+    uvicorn.run("car_sharing:app", reload=True)
