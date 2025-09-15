@@ -1,5 +1,6 @@
 from datetime import datetime
 from fastapi import FastAPI
+from fastapi import HTTPException
 from fastapi.responses  import FileResponse
 # from typing import Optional
 import uvicorn
@@ -77,7 +78,10 @@ def get_cars(size:str|None=None, doors:int|None=None):
 @app.get("/api/cars/{id}")
 def car_by_id(id:int):
     results = [car for car in db if car['id'] == id]
-    return results[0]
+    if results:
+        return results[0]
+    else:
+        raise HTTPException(status_code=404, detail=f"No car with id={id}")
 
 if __name__ == "__main__":
     uvicorn.run("car_sharing:app", reload=True)
