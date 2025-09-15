@@ -1,6 +1,7 @@
 from datetime import datetime
 from fastapi import FastAPI
 from fastapi.responses  import FileResponse
+from typing import Optional
 
 import os
 
@@ -42,9 +43,11 @@ def favicon():
 #     return db
 
 
-# Filter the data based on 'size'
+## Query Params
+# Filter the data based on 'size' and/or 'doors'
 @app.get("/api/cars")
-def get_cars(size, doors:int):
+def get_cars(size:str|None=None, doors:int|None=None):
+# def get_cars(size:Optional[str]=None, doors:Optional[int]=None):
     """Returns a collection of cars from the server records."""
     # if not isinstance(int(doors), int):
     #     raise TypeError("doors should be an integer")
@@ -52,7 +55,18 @@ def get_cars(size, doors:int):
     #     return [car for car in db if car['size'] == size]
     # else:
     #     return db
-    print(type(size), size, type(doors), doors)
+    # print(type(size), size, type(doors), doors)
 
     # return [car for car in db if car['size'] == size and car['door'] >= int(doors)]
-    return [car for car in db if car['size'] == size and car['door'] >= doors]
+    # return [car for car in db if car['size'] == size and car['door'] >= doors]
+
+    results = db
+
+    if size:
+        results =  [car for car in results if car['size'] == size]
+
+    if doors:
+        results =  [car for car in results if car['door'] >= doors]
+
+    return results
+
