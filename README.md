@@ -25,7 +25,8 @@
     * https://github.com/python/asyncio
     * https://github.com/aio-libs
 * [FastAPI](https://fastapi.tiangolo.com/)
-    [Concurrency Support for third party libraries](https://fastapi.tiangolo.com/async/?h=third+party+librari#in-a-hurry)
+    * [Concurrency Support for third party libraries](https://fastapi.tiangolo.com/async/?h=third+party+librari#in-a-hurry)
+    * [HTTP Response codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status)
 
 ## Snippets
 * Virtual Enviroments
