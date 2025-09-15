@@ -26,13 +26,18 @@
     * https://github.com/aio-libs
 
 ## Snippets
-* Create Virtual environment with __*'venv'*__ : `py -m venv .venv-trial`
-    * Choose a specific Python version: `/c/Users/Ramakant/AppData/Local/Programs/Python/Python311/python -m venv .venv-Py311`
-* Actiavte virt. env:
-    * Bash: `source .venv-trial/Scripts/activate`
-    * Command Prompt: `.venv-trial\Scripts\activate.bat`
-    * Power Shell: `.venv-trial\Scripts\Activate.ps1`
-* Deactivate: `deactivate`
+* Virtual Enviroments
+    * Create Virtual environment with __*'venv'*__ : `py -m venv .venv-trial`
+        * Choose a specific Python version: `/c/Users/Ramakant/AppData/Local/Programs/Python/Python311/python -m venv .venv-Py311`
+    * Actiavte virt. env:
+        * Bash: `source .venv-trial/Scripts/activate`
+        * Command Prompt: `.venv-trial\Scripts\activate.bat`
+        * Power Shell: `.venv-trial\Scripts\Activate.ps1`
+    * Deactivate: `deactivate`
+* FastAPI
+    * Run the server with 
+        * `uvicorn car_sharing:app --reload`, OR
+        * `fastapi dev car_sharing.py`
 
 ## Operational
 * [Trainer Feedback](https://forms.gle/BfGFANkbAN9tSUZg9)

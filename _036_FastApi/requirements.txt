@@ -1,0 +1,12 @@
+fastapi[all]
+sqlmodel
+passlib[bcrypt]
+pytest
+
+# SQLITE installation
+# VS code Extension: SQLite Viewer (by Florian Klampfer)
+
+# Postman: 
+#   Online
+#   App on m/c
+#   VasCode Extension
