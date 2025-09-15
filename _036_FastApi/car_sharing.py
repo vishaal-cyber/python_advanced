@@ -3,8 +3,8 @@ from fastapi import FastAPI
 from fastapi import HTTPException
 from fastapi.responses  import FileResponse
 # from typing import Optional
-from schemas import Car
-from schemas import load_lib
+from schemas import Car, CarInput
+from schemas import load_lib, save_lib
 import uvicorn
 
 import os
@@ -45,7 +45,10 @@ def get_cars(size:str|None=None, doors:int|None=None) -> list[Car]:
     if doors:
         results =  [car for car in results if car.doors >= doors]
 
-    return results
+    if results:
+        return results
+    else:
+        raise HTTPException(status_code=404, detail=f"No cars with size={size} and doors={doors}.")
 
 
 ## PATH Params
@@ -56,9 +59,21 @@ def car_by_id(id:int):
     # results = [car for car in db if car['id'] == id]
     results = [car for car in db if car.id == id]
     if results:
-        return Car.model_validate(results[0])
+        return results[0]
     else:
         raise HTTPException(status_code=404, detail=f"No car with id={id}")
+
+
+## POST - To create an object on the server
+@app.post("/api/cars")
+def add_car(car: CarInput):
+    """Add a new car to the collection"""
+    id = len(db) + 1
+    new_car = Car(id=id, size=car.size, fuel=car.fuel, doors=car.doors, transmission=car.transmission)
+    db.append(new_car)
+    save_lib(db)
+    # new_car =  [obj for obj in db if obj.id == car.id]
+    return new_car
 
 if __name__ == "__main__":
     uvicorn.run("car_sharing:app")#, reload=True)
