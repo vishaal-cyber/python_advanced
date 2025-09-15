@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi import HTTPException
 from fastapi.responses  import FileResponse
 # from typing import Optional
+from schemas import Car
 import uvicorn
 
 import os
