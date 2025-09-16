@@ -65,8 +65,8 @@ def car_by_id(id:int):
 
 
 ## POST - To create an object on the server
-@app.post("/api/cars")
-def add_car(car: CarInput):
+@app.post("/api/cars") #, response_model=Car)
+def add_car(car: CarInput) -> Car:
     """Add a new car to the collection"""
     id = len(db) + 1
     new_car = Car(id=id, size=car.size, fuel=car.fuel, doors=car.doors, transmission=car.transmission)
@@ -74,6 +74,18 @@ def add_car(car: CarInput):
     save_lib(db)
     # new_car =  [obj for obj in db if obj.id == car.id]
     return new_car
+    # return str(new_car)
+    # return "Done"
+
+@app.delete("/api/cars/{id}", status_code=204)
+def remove_car(id: int):
+    matches = [car for car in db if car.id == id]
+    if matches:
+        car = matches[0]
+        db.remove(car)
+        save_lib(db)
+    else:
+        raise HTTPException(status_code=404, detail=f"No car with id={id} found!")
 
 if __name__ == "__main__":
     uvicorn.run("car_sharing:app")#, reload=True)

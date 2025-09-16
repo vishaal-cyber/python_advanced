@@ -61,19 +61,5 @@
         "doors": 5,
         "transmission": "auto",
         "id": 9
-    },
-    {
-        "size": "l",
-        "fuel": "petrol",
-        "doors": 6,
-        "transmission": "auto",
-        "id": 10
-    },
-    {
-        "size": "m",
-        "fuel": "hybrid",
-        "doors": 4,
-        "transmission": "auto",
-        "id": 11
     }
 ]
