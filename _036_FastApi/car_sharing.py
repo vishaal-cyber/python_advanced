@@ -4,6 +4,7 @@ from fastapi import HTTPException
 from fastapi.responses  import FileResponse
 # from typing import Optional
 from schemas import Car, CarInput
+from schemas import Trip, TripInput
 from schemas import load_lib, save_lib
 import uvicorn
 
@@ -11,9 +12,9 @@ import os
 
 db = load_lib()
 
-app = FastAPI()
+app = FastAPI(title="Car Sharing Services")
 
-@app.get("/")
+@app.get("/", tags=['Generic'])
 def welcome():
     """Returns a friendly welcome message."""
     return {'message': "Welcome to the Car Sharing service"}
@@ -21,7 +22,7 @@ def welcome():
 
 # Implement functionality for returning the current datetime
 # return {'date': datetime.now()}
-@app.get("/date")
+@app.get("/date", tags=['Generic'])
 def date():
     """Returns the date"""
     return {'date': datetime.now()}
@@ -34,7 +35,7 @@ def favicon():
 
 ## Query Params     (http://localhost:8000/api/cars?size=s&doors=4)
 # Filter the data based on 'size' and/or 'doors'
-@app.get("/api/cars")
+@app.get("/api/cars", tags=['Car'])
 def get_cars(size:str|None=None, doors:int|None=None) -> list[Car]:
     """Returns a collection of cars from the server records."""
     results = db
@@ -53,7 +54,7 @@ def get_cars(size:str|None=None, doors:int|None=None) -> list[Car]:
 
 ## PATH Params
 # Retrieve a specific car by id
-@app.get("/api/cars/{id}")
+@app.get("/api/cars/{id}", tags=['Car'])
 def car_by_id(id:int):
     """Retrieve a specific ar by its id"""
     # results = [car for car in db if car['id'] == id]
@@ -65,7 +66,7 @@ def car_by_id(id:int):
 
 
 ## POST - To create an object on the server
-@app.post("/api/cars") #, response_model=Car)
+@app.post("/api/cars", tags=['Car']) #, response_model=Car)
 def add_car(car: CarInput) -> Car:
     """Add a new car to the collection"""
     id = len(db) + 1
@@ -77,7 +78,7 @@ def add_car(car: CarInput) -> Car:
     # return str(new_car)
     # return "Done"
 
-@app.delete("/api/cars/{id}", status_code=204)
+@app.delete("/api/cars/{id}", status_code=204, tags=['Car'])
 def remove_car(id: int):
     matches = [car for car in db if car.id == id]
     if matches:
@@ -87,7 +88,7 @@ def remove_car(id: int):
     else:
         raise HTTPException(status_code=404, detail=f"No car with id={id} found!")
 
-@app.put("/api/cars/{id}", response_model=Car)
+@app.put("/api/cars/{id}", response_model=Car, tags=['Car'])
 def change_car(id: int, new_data: CarInput) -> Car:
     matches = [car for car in db if car.id == id]
     if matches:
@@ -100,6 +101,24 @@ def change_car(id: int, new_data: CarInput) -> Car:
         return car
     else:
         raise HTTPException(status_code=404, detail=f"No car with id={id} found!")
+    
+
+@app.post("/api/cars/{car_id}/trips", tags=['Trips'])
+def add_trip(car_id: int, trip: TripInput) -> Trip:
+    matches = [car for car in db if car.id == car_id]
+    if matches:
+        car = matches[0]
+        new_trip = Trip(id=len(car.trips)+1,
+                        start=trip.start,
+                        end=trip.end,
+                        description=trip.description)
+        car.trips.append(new_trip)
+        save_lib(db)
+        return new_trip
+    else:
+        raise HTTPException(status_code=404, detail=f"No car with id={id} found!")
+ 
+
     
 if __name__ == "__main__":
     uvicorn.run("car_sharing:app")#, reload=True)

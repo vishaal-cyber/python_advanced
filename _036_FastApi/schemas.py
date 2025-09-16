@@ -5,8 +5,17 @@
     # __repr__
 
 from pydantic import BaseModel
+from pydantic import ConfigDict
 import json
 import os
+
+class TripInput(BaseModel):
+    start: int
+    end:int
+    description: str
+
+class Trip(TripInput):
+    id: int
 
 class CarInput(BaseModel):
     """Model for Car class"""
@@ -16,8 +25,22 @@ class CarInput(BaseModel):
     doors: int
     transmission: str|None = "auto"
 
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "size": "cfg-size",
+                "fuel": "tesla",
+                "doors": 4,
+                "transmission": "automatic"
+            }
+        }
+    )
+
+
 class Car(CarInput):
     id: int
+    trips: list[Trip] = []
+
 
 
 fileName = "cars.json"
