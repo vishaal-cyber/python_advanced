@@ -2,8 +2,14 @@ from datetime import datetime
 from fastapi import FastAPI
 from fastapi import HTTPException
 from fastapi.responses  import FileResponse
+
+from contextlib import asynccontextmanager
+
+from sqlmodel import SQLModel
+from sqlmodel import create_engine, Session
 # from typing import Optional
 from schemas import Car, CarInput
+from schemas import Car_DBModel
 from schemas import Trip, TripInput
 from schemas import load_lib, save_lib
 import uvicorn
@@ -12,7 +18,32 @@ import os
 
 db = load_lib()
 
-app = FastAPI(title="Car Sharing Services")
+
+engine = create_engine(
+    "sqlite:///carsharing.db", 
+    connect_args={"check_same_thread": False},
+    echo = True
+)
+
+
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup Code
+    SQLModel.metadata.create_all(engine)
+
+    # App 
+    yield       # yield control to the 'app' object
+
+    # Shutdown Code
+    print("That's all folks!")
+
+
+app = FastAPI(title="Car Sharing Services", lifespan=lifespan)
+
+
+#region Generic #############################################################################################################################
 
 @app.get("/", tags=['Generic'])
 def welcome():
@@ -31,6 +62,8 @@ def date():
 def favicon():
     """Serves the favicon.ico file"""
     return FileResponse(os.path.join(os.path.dirname(__file__), 'static', 'sun.png'))
+
+#endregion
 
 
 ## Query Params     (http://localhost:8000/api/cars?size=s&doors=4)
@@ -67,16 +100,21 @@ def car_by_id(id:int):
 
 ## POST - To create an object on the server
 @app.post("/api/cars", tags=['Car']) #, response_model=Car)
-def add_car(car: CarInput) -> Car:
+def add_car(car: CarInput):
     """Add a new car to the collection"""
-    id = len(db) + 1
-    new_car = Car(id=id, size=car.size, fuel=car.fuel, doors=car.doors, transmission=car.transmission)
-    db.append(new_car)
-    save_lib(db)
-    # new_car =  [obj for obj in db if obj.id == car.id]
+    # Need
+    #   connectivity to db
+    #   Session to operate in
+    #   Operations (CRUD) 
+
+    with Session(engine) as session:
+        new_car = Car_DBModel.model_validate(car)
+        session.add(new_car)
+        print(f"{new_car = }")
+        session.commit()
+        print(f"{new_car = }")
+        session.refresh(new_car)
     return new_car
-    # return str(new_car)
-    # return "Done"
 
 @app.delete("/api/cars/{id}", status_code=204, tags=['Car'])
 def remove_car(id: int):
@@ -102,6 +140,8 @@ def change_car(id: int, new_data: CarInput) -> Car:
     else:
         raise HTTPException(status_code=404, detail=f"No car with id={id} found!")
     
+#--------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------
 
 @app.post("/api/cars/{car_id}/trips", tags=['Trips'])
 def add_trip(car_id: int, trip: TripInput) -> Trip:
@@ -116,9 +156,24 @@ def add_trip(car_id: int, trip: TripInput) -> Trip:
         save_lib(db)
         return new_trip
     else:
-        raise HTTPException(status_code=404, detail=f"No car with id={id} found!")
- 
+        raise HTTPException(status_code=404, detail=f"No car with id={car_id} found!")
 
-    
+
+@app.get("/api/cars/{car_id}/trips", tags=['Trips'])
+def get_trips(car_id: int) -> list[Trip]:
+    matches = [car for car in db if car.id == car_id]
+    if matches:
+        car = matches[0]
+        if car.trips:
+            return car.trips
+        else:
+            raise HTTPException(status_code=404, detail=f"No trips found for car with id={car_id}")
+    else:
+        raise HTTPException(status_code=404, detail=f"No car with id={car_id} found!")
+
+
+
+
+#####################################################################################################################
 if __name__ == "__main__":
     uvicorn.run("car_sharing:app")#, reload=True)

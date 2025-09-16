@@ -59,6 +59,12 @@
                 "end": 20,
                 "description": "Shopping",
                 "id": 1
+            },
+            {
+                "start": 20,
+                "end": 100,
+                "description": "Day Trip out of city",
+                "id": 2
             }
         ]
     },

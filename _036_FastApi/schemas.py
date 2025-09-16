@@ -1,15 +1,10 @@
-# class Car:
-    # Initialiser
-    # Properties 
-    # __str__
-    # __repr__
-
-from pydantic import BaseModel
+# from pydantic import BaseModel
+from sqlmodel import SQLModel, Field
 from pydantic import ConfigDict
 import json
 import os
 
-class TripInput(BaseModel):
+class TripInput(SQLModel):
     start: int
     end:int
     description: str
@@ -17,7 +12,7 @@ class TripInput(BaseModel):
 class Trip(TripInput):
     id: int
 
-class CarInput(BaseModel):
+class CarInput(SQLModel):
     """Model for Car class"""
     # id: int
     size: str
@@ -36,6 +31,10 @@ class CarInput(BaseModel):
         }
     )
 
+
+class Car_DBModel(CarInput, table=True):
+    id: int|None = Field(primary_key=True, default=None)
+    
 
 class Car(CarInput):
     id: int

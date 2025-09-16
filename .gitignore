@@ -212,3 +212,4 @@ __marimo__/
 updated_data.*
 Employee.json
 Employee.pkl
+carsharing.db
