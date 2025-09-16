@@ -2,12 +2,15 @@ from datetime import datetime
 from fastapi import FastAPI
 from fastapi import HTTPException
 from fastapi.responses  import FileResponse
+from fastapi import Depends
 
 from contextlib import asynccontextmanager
 
 from sqlmodel import SQLModel
 from sqlmodel import create_engine, Session
 from sqlmodel import select
+
+from typing import Annotated
 
 # from typing import Optional
 from schemas import Car, CarInput
@@ -45,6 +48,11 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Car Sharing Services", lifespan=lifespan)
 
 
+def get_session():
+    with Session(engine) as session:
+        yield session
+
+
 #region Generic #############################################################################################################################
 
 @app.get("/", tags=['Generic'])
@@ -71,21 +79,21 @@ def favicon():
 ## Query Params     (http://localhost:8000/api/cars?size=s&doors=4)
 # Filter the data based on 'size' and/or 'doors'
 @app.get("/api/cars", tags=['Car'])
-def get_cars(size:str|None=None, doors:int|None=None) -> list[Car_DBModel]:
+# def get_cars(size:str|None=None, doors:int|None=None, session = Annotated[Session, Depends(get_session)]) -> list[Car_DBModel]:
+def get_cars(size:str|None=None, doors:int|None=None, session: Session = Depends(get_session)) -> list[Car_DBModel]:
     """Returns a collection of cars from the server records."""
-    with Session(engine) as session:
-        query = select(Car_DBModel)
-        if size:
-            query = query.where(Car_DBModel.size == size)
-        if doors:
-            query = query.where(Car_DBModel.doors >= doors)
+    query = select(Car_DBModel)
+    if size:
+        query = query.where(Car_DBModel.size == size)
+    if doors:
+        query = query.where(Car_DBModel.doors >= doors)
 
-        result = session.exec(query).all()
+    result = session.exec(query).all()
 
-        if result:
-            return result  # of type Car_DBModel
-        else:
-            raise HTTPException(status_code=404, detail=f"No cars with size={size} and doors={doors}.")
+    if result:
+        return result  # of type Car_DBModel
+    else:
+        raise HTTPException(status_code=404, detail=f"No cars with size={size} and doors={doors}.")
 
 
 ## PATH Params
