@@ -7,6 +7,8 @@ from contextlib import asynccontextmanager
 
 from sqlmodel import SQLModel
 from sqlmodel import create_engine, Session
+from sqlmodel import select
+
 # from typing import Optional
 from schemas import Car, CarInput
 from schemas import Car_DBModel
@@ -69,38 +71,40 @@ def favicon():
 ## Query Params     (http://localhost:8000/api/cars?size=s&doors=4)
 # Filter the data based on 'size' and/or 'doors'
 @app.get("/api/cars", tags=['Car'])
-def get_cars(size:str|None=None, doors:int|None=None) -> list[Car]:
+def get_cars(size:str|None=None, doors:int|None=None) -> list[Car_DBModel]:
     """Returns a collection of cars from the server records."""
-    results = db
+    with Session(engine) as session:
+        query = select(Car_DBModel)
+        if size:
+            query = query.where(Car_DBModel.size == size)
+        if doors:
+            query = query.where(Car_DBModel.doors >= doors)
 
-    if size:
-        results =  [car for car in results if car.size == size]
+        result = session.exec(query).all()
 
-    if doors:
-        results =  [car for car in results if car.doors >= doors]
-
-    if results:
-        return results
-    else:
-        raise HTTPException(status_code=404, detail=f"No cars with size={size} and doors={doors}.")
+        if result:
+            return result  # of type Car_DBModel
+        else:
+            raise HTTPException(status_code=404, detail=f"No cars with size={size} and doors={doors}.")
 
 
 ## PATH Params
 # Retrieve a specific car by id
 @app.get("/api/cars/{id}", tags=['Car'])
-def car_by_id(id:int):
+def car_by_id(id:int) -> Car_DBModel:
     """Retrieve a specific ar by its id"""
     # results = [car for car in db if car['id'] == id]
-    results = [car for car in db if car.id == id]
-    if results:
-        return results[0]
-    else:
-        raise HTTPException(status_code=404, detail=f"No car with id={id}")
-
+    with Session(engine) as session:
+        car = session.get(Car_DBModel, id)
+        if car:
+            return car
+        else:
+            return HTTPException(status_code=404, detail=f"No car with id={id}.")
+        
 
 ## POST - To create an object on the server
 @app.post("/api/cars", tags=['Car']) #, response_model=Car)
-def add_car(car: CarInput):
+def add_car(car: CarInput) -> Car_DBModel:
     """Add a new car to the collection"""
     # Need
     #   connectivity to db
