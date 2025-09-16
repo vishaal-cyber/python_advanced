@@ -172,7 +172,19 @@ def get_trips(car_id: int) -> list[Trip]:
         raise HTTPException(status_code=404, detail=f"No car with id={car_id} found!")
 
 
+#--------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------
 
+@app.post("/api/cars/migrate", tags=['Generic'])
+def migrate_data_to_db() -> list[Car_DBModel]:
+    '''Currently, will duplicate if called multiple times.
+    Trips data is not migrated as no data model for trips created yet.'''
+    with Session(engine) as session:
+        for car in db:
+            new_car = Car_DBModel.model_validate(car)
+            session.add(new_car)
+        session.commit()
+    return db
 
 #####################################################################################################################
 if __name__ == "__main__":
