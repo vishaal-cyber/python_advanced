@@ -16,6 +16,7 @@ from typing import Annotated
 from schemas import Car, CarInput
 from schemas import Car_DBModel
 from schemas import Trip, TripInput
+from schemas import Trip_DBModel
 from schemas import load_lib, save_lib
 import uvicorn
 
@@ -71,16 +72,23 @@ def favicon():
 
 
 @app.post("/api/cars/migrate", tags=['Generic'])
-def migrate_data_to_db() -> list[Car_DBModel]:
+def migrate_data_to_db(session: Annotated[Session, Depends(get_session)]) -> list[Car_DBModel]:
     '''Currently, will duplicate if called multiple times.
     Trips data is not migrated as no data model for trips created yet.'''
     db = load_lib()
-    with Session(engine) as session:
-        for car in db:
-            new_car = Car_DBModel.model_validate(car)
-            session.add(new_car)
+    lstCars = []
+    for car in db:
+        new_car = Car_DBModel.model_validate(car, update={'trips': []})
+        session.add(new_car)
         session.commit()
-    return db
+        session.refresh(new_car)
+        for trip in car.trips:
+            new_trip = Trip_DBModel.model_validate(trip, update={'car_id': new_car.id, 'id': None})
+            session.add(new_trip)
+            session.commit()
+            session.refresh(new_trip)
+        lstCars.append(new_car)
+    return lstCars
 
 #--------------------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------------------------
@@ -90,7 +98,7 @@ def migrate_data_to_db() -> list[Car_DBModel]:
 ## Query Params     (http://localhost:8000/api/cars?size=s&doors=4)
 # Filter the data based on 'size' and/or 'doors'
 @app.get("/api/cars", tags=['Car'])
-def get_cars(session: Annotated[Session, Depends(get_session)], size:str|None=None, doors:int|None=None) -> list[Car_DBModel]:
+def get_cars(session: Annotated[Session, Depends(get_session)], size:str|None=None, doors:int|None=None) -> list[Car]:
     """Returns a collection of cars from the server records."""
     query = select(Car_DBModel)
     if size:
@@ -109,7 +117,7 @@ def get_cars(session: Annotated[Session, Depends(get_session)], size:str|None=No
 ## PATH Params
 # Retrieve a specific car by id
 @app.get("/api/cars/{id}", tags=['Car'])
-def car_by_id(session: Annotated[Session, Depends(get_session)], id:int) -> Car_DBModel:
+def car_by_id(session: Annotated[Session, Depends(get_session)], id:int) -> Car:
     """Retrieve a specific ar by its id"""
     car = session.get(Car_DBModel, id)
     if car:
@@ -166,26 +174,23 @@ def change_car(session: Annotated[Session, Depends(get_session)], id: int, new_d
 
 #region Trips ##############################################################################################################################
 @app.post("/api/cars/{car_id}/trips", tags=['Trips'])
-def add_trip(car_id: int, trip: TripInput) -> Trip:
-    matches = [car for car in db if car.id == car_id]
-    if matches:
-        car = matches[0]
-        new_trip = Trip(id=len(car.trips)+1,
-                        start=trip.start,
-                        end=trip.end,
-                        description=trip.description)
+def add_trip(session: Annotated[Session, Depends(get_session)], car_id: int, trip: TripInput) -> Trip_DBModel:
+    car = session.get(Car_DBModel, car_id)
+    if car:
+        new_trip = Trip_DBModel.model_validate(trip, update={'car_id': car_id, 'id': None})
         car.trips.append(new_trip)
-        save_lib(db)
+        session.commit()
+        session.refresh(new_trip)
         return new_trip
     else:
-        raise HTTPException(status_code=404, detail=f"No car with id={car_id} found!")
+        raise HTTPException(status_code=404, detail=f"No car with id={car_id}")
 
 
 @app.get("/api/cars/{car_id}/trips", tags=['Trips'])
-def get_trips(car_id: int) -> list[Trip]:
-    matches = [car for car in db if car.id == car_id]
-    if matches:
-        car = matches[0]
+def get_trips(session: Annotated[Session, Depends(get_session)], car_id: int) -> list[Trip]:
+    car = session.get(Car_DBModel, car_id)
+    if car:
+        car = Car.model_validate(car)
         if car.trips:
             return car.trips
         else:

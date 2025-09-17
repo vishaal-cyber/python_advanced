@@ -1,5 +1,6 @@
 # from pydantic import BaseModel
 from sqlmodel import SQLModel, Field
+from sqlmodel import Relationship
 from pydantic import ConfigDict
 import json
 import os
@@ -9,6 +10,11 @@ class TripInput(SQLModel):
     end:int
     description: str
 
+class Trip_DBModel(TripInput, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    car_id: int = Field(foreign_key="car_dbmodel.id")
+    car: "Car_DBModel" = Relationship(back_populates="trips")
+    
 class Trip(TripInput):
     id: int
 
@@ -34,6 +40,7 @@ class CarInput(SQLModel):
 
 class Car_DBModel(CarInput, table=True):
     id: int|None = Field(primary_key=True, default=None)
+    trips: list[Trip_DBModel] = Relationship(back_populates="car")
     
 
 class Car(CarInput):
