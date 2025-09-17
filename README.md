@@ -27,6 +27,9 @@
 * [FastAPI](https://fastapi.tiangolo.com/)
     * [Concurrency Support for third party libraries](https://fastapi.tiangolo.com/async/?h=third+party+librari#in-a-hurry)
     * [HTTP Response codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status)
+    * [Response - Change Status Code](https://fastapi.tiangolo.com/advanced/response-change-status-code/#use-a-response-parameter)
+    * [HTTP Response Status Codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
+
 
 ## Snippets
 * Virtual Enviroments

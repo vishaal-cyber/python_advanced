@@ -118,11 +118,18 @@ def change_car(session: Annotated[Session, Depends(get_session)], id: int, new_d
 #endregion
 
 #region Trips ##############################################################################################################################
+
+class BadTripException(Exception):  # Custom Exception Class
+    pass
+
+
 @router.post("/{car_id}/trips", tags=['Trips'])
 def add_trip(session: Annotated[Session, Depends(get_session)], car_id: int, trip: TripInput) -> Trip_DBModel:
     car = session.get(Car_DBModel, car_id)
     if car:
         new_trip = Trip_DBModel.model_validate(trip, update={'car_id': car_id, 'id': None})
+        if new_trip.start > new_trip.end:
+            raise BadTripException("Trip end before start")
         car.trips.append(new_trip)
         session.commit()
         session.refresh(new_trip)
