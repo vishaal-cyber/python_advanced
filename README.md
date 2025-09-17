@@ -67,7 +67,7 @@
 # Instructions for Capstone Codebase Submission
 
 ## Repository Setup
-* The capstone repository is `<repo-link>`.
+* The capstone repository is `https://github.com/Training-Repository/20250903_Bosch_PyAdv_Capstone.git`.
 * Clone the repository to your local machine:
   ```bash
   git clone <repo-link>
