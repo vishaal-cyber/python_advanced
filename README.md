@@ -58,3 +58,73 @@
 
 ## Contact
 * ramakant.s.debata@gmail.com
+
+
+---
+---
+
+
+# Instructions for Capstone Codebase Submission
+
+## Repository Setup
+* The capstone repository is `<repo-link>`.
+* Clone the repository to your local machine:
+  ```bash
+  git clone <repo-link>
+  ```
+
+## Branch Creation and Code Submission
+* Create a branch in your own name:
+  ```bash
+  git checkout -b your_firstname_lastname
+  ```
+  **Replace `your_firstname_lastname` with your actual name**
+
+## Code Organization Requirements
+* **Your branch must contain ONLY the `api_server/` folder at the top level**
+* **The `data/` folder (with JSON files) must be inside `api_server/`**
+
+**Example of correct structure:**
+```
+your_branch/
+└── api_server/
+    ├── main.py
+    ├── models/
+    ├── routes/
+    ├── services/
+    ├── utils/
+    ├── data/
+    │   ├── books.json
+    │   ├── members.json
+    │   └── transactions.json
+    └── requirements.txt
+```
+
+**Incorrect structure (will cause evaluation issues):**
+```
+your_branch/
+├── api_server/
+├── data/          ❌ Wrong: data folder at top level
+├── client_app/    ❌ Wrong: should not be included
+└── other_files/   ❌ Wrong: no other folders allowed
+```
+
+* Copy your implemented code to the `api_server/` folder in the repository
+* Add and commit your code:
+  ```bash
+  git add .
+  git commit -m "Implement Library Management System API"
+  ```
+
+* Push your code to the repository, **specifying your branch explicitly**:
+  ```bash
+  git push origin your_firstname_lastname
+  ```
+
+## Important Submission Notes
+* **Only the `api_server/` folder will be evaluated**
+* **Do not modify** the `client_app/` folder or any evaluation scripts
+* **Ensure your server starts** with: `uvicorn main:app --reload`
+* **Test your implementation** using the provided client application before submitting
+
+    
