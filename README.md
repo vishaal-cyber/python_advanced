@@ -32,6 +32,11 @@
     * [Middleware](https://fastapi.tiangolo.com/tutorial/middleware/)
         * [Advanced - HTTPS Redirect Middleware](https://fastapi.tiangolo.com/advanced/middleware/#httpsredirectmiddleware)
         * [Advanced - GZip Middleware](https://fastapi.tiangolo.com/advanced/middleware/#gzipmiddleware)
+    * [HTTP Cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
+        * [Response Cookies](https://fastapi.tiangolo.com/advanced/response-cookies/)
+    * [HTTP Headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers)
+        * [Header: User-Agent](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent)
+        * [Response Headers](https://fastapi.tiangolo.com/advanced/response-headers/)
 
 
 ## Snippets

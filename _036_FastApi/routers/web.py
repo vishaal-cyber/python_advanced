@@ -4,6 +4,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi import Request
 from fastapi import Form, Depends
 from fastapi import APIRouter
+from fastapi import Cookie
 
 from sqlmodel import Session
 
@@ -22,8 +23,9 @@ templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), ".
 #region Generic #############################################################################################################################
 
 @router.get("/", response_class=HTMLResponse)
-def home(request: Request):
+def home(request: Request, cars_cookie: str|None = Cookie(None)):
     """Returns a page to query for listing of cars in database, with options to filter on 'size' and 'doors'."""
+    print(cars_cookie)
     return templates.TemplateResponse("home.html",
                                       {"request": request})
 
