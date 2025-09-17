@@ -29,6 +29,9 @@
     * [HTTP Response codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status)
     * [Response - Change Status Code](https://fastapi.tiangolo.com/advanced/response-change-status-code/#use-a-response-parameter)
     * [HTTP Response Status Codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
+    * [Middleware](https://fastapi.tiangolo.com/tutorial/middleware/)
+        * [Advanced - HTTPS Redirect Middleware](https://fastapi.tiangolo.com/advanced/middleware/#httpsredirectmiddleware)
+        * [Advanced - GZip Middleware](https://fastapi.tiangolo.com/advanced/middleware/#gzipmiddleware)
 
 
 ## Snippets
