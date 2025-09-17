@@ -21,17 +21,12 @@ import uvicorn
 
 import os
 
-db = load_lib()
-
-
+#region Setup ################################################################################################################################
 engine = create_engine(
     "sqlite:///carsharing.db", 
     connect_args={"check_same_thread": False},
     echo = True
 )
-
-
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -52,6 +47,7 @@ def get_session():
     with Session(engine) as session:
         yield session
 
+#endregion
 
 #region Generic #############################################################################################################################
 
@@ -73,14 +69,28 @@ def favicon():
     """Serves the favicon.ico file"""
     return FileResponse(os.path.join(os.path.dirname(__file__), 'static', 'sun.png'))
 
+
+@app.post("/api/cars/migrate", tags=['Generic'])
+def migrate_data_to_db() -> list[Car_DBModel]:
+    '''Currently, will duplicate if called multiple times.
+    Trips data is not migrated as no data model for trips created yet.'''
+    db = load_lib()
+    with Session(engine) as session:
+        for car in db:
+            new_car = Car_DBModel.model_validate(car)
+            session.add(new_car)
+        session.commit()
+    return db
+
+#--------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------
 #endregion
 
-
+#region Car ################################################################################################################################
 ## Query Params     (http://localhost:8000/api/cars?size=s&doors=4)
 # Filter the data based on 'size' and/or 'doors'
 @app.get("/api/cars", tags=['Car'])
-# def get_cars(size:str|None=None, doors:int|None=None, session = Annotated[Session, Depends(get_session)]) -> list[Car_DBModel]:
-def get_cars(size:str|None=None, doors:int|None=None, session: Session = Depends(get_session)) -> list[Car_DBModel]:
+def get_cars(session: Annotated[Session, Depends(get_session)], size:str|None=None, doors:int|None=None) -> list[Car_DBModel]:
     """Returns a collection of cars from the server records."""
     query = select(Car_DBModel)
     if size:
@@ -99,62 +109,62 @@ def get_cars(size:str|None=None, doors:int|None=None, session: Session = Depends
 ## PATH Params
 # Retrieve a specific car by id
 @app.get("/api/cars/{id}", tags=['Car'])
-def car_by_id(id:int) -> Car_DBModel:
+def car_by_id(session: Annotated[Session, Depends(get_session)], id:int) -> Car_DBModel:
     """Retrieve a specific ar by its id"""
-    # results = [car for car in db if car['id'] == id]
-    with Session(engine) as session:
-        car = session.get(Car_DBModel, id)
-        if car:
-            return car
-        else:
-            return HTTPException(status_code=404, detail=f"No car with id={id}.")
+    car = session.get(Car_DBModel, id)
+    if car:
+        return car
+    else:
+        return HTTPException(status_code=404, detail=f"No car with id={id}.")
         
 
 ## POST - To create an object on the server
-@app.post("/api/cars", tags=['Car']) #, response_model=Car)
-def add_car(car: CarInput) -> Car_DBModel:
+@app.post("/api/cars", tags=['Car'])
+def add_car(session: Annotated[Session, Depends(get_session)], car: CarInput) -> Car_DBModel:
     """Add a new car to the collection"""
     # Need
     #   connectivity to db
     #   Session to operate in
     #   Operations (CRUD) 
 
-    with Session(engine) as session:
-        new_car = Car_DBModel.model_validate(car)
-        session.add(new_car)
-        print(f"{new_car = }")
-        session.commit()
-        print(f"{new_car = }")
-        session.refresh(new_car)
+    new_car = Car_DBModel.model_validate(car)
+    session.add(new_car)
+    print(f"{new_car = }")
+    session.commit()
+    print(f"{new_car = }")
+    session.refresh(new_car)
     return new_car
 
 @app.delete("/api/cars/{id}", status_code=204, tags=['Car'])
-def remove_car(id: int):
-    matches = [car for car in db if car.id == id]
-    if matches:
-        car = matches[0]
-        db.remove(car)
-        save_lib(db)
+def remove_car(session: Annotated[Session, Depends(get_session)], id: int):
+    """Remove a car, specified by 'id',  from the server."""
+    car = session.get(Car_DBModel, id)
+    if car:
+        session.delete(car)
+        session.commit()
     else:
         raise HTTPException(status_code=404, detail=f"No car with id={id} found!")
 
-@app.put("/api/cars/{id}", response_model=Car, tags=['Car'])
-def change_car(id: int, new_data: CarInput) -> Car:
-    matches = [car for car in db if car.id == id]
-    if matches:
-        car = matches[0]
+@app.put("/api/cars/{id}", response_model=Car_DBModel, tags=['Car'])
+def change_car(session: Annotated[Session, Depends(get_session)], id: int, new_data: CarInput) -> Car_DBModel:
+    """Replace a car, specified by 'id', on the server"""
+    car = session.get(Car_DBModel, id)
+    if car:
         car.fuel = new_data.fuel
         car.size = new_data.size
         car.doors = new_data.doors
         car.transmission = new_data.transmission
-        save_lib(db)
+        session.commit()
         return car
     else:
         raise HTTPException(status_code=404, detail=f"No car with id={id} found!")
-    
+
 #--------------------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------------------------
 
+#endregion
+
+#region Trips ##############################################################################################################################
 @app.post("/api/cars/{car_id}/trips", tags=['Trips'])
 def add_trip(car_id: int, trip: TripInput) -> Trip:
     matches = [car for car in db if car.id == car_id]
@@ -183,21 +193,11 @@ def get_trips(car_id: int) -> list[Trip]:
     else:
         raise HTTPException(status_code=404, detail=f"No car with id={car_id} found!")
 
-
 #--------------------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------------------------
 
-@app.post("/api/cars/migrate", tags=['Generic'])
-def migrate_data_to_db() -> list[Car_DBModel]:
-    '''Currently, will duplicate if called multiple times.
-    Trips data is not migrated as no data model for trips created yet.'''
-    with Session(engine) as session:
-        for car in db:
-            new_car = Car_DBModel.model_validate(car)
-            session.add(new_car)
-        session.commit()
-    return db
+#endregion
 
-#####################################################################################################################
+############################################################################################################################################
 if __name__ == "__main__":
     uvicorn.run("car_sharing:app")#, reload=True)
