@@ -6,7 +6,7 @@ from sqlmodel import SQLModel
 
 from db import engine
 from routers import cars
-from routers import generic
+from routers import web
 
 
 
@@ -29,7 +29,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Car Sharing Services", lifespan=lifespan)
 app.include_router(cars.router)
-app.include_router(generic.router)
+app.include_router(web.router)
 
 
 #endregion
